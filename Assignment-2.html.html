@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="Content-Security-Policy"
+      content="default-src: http: https: 'self'"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Giphy API Demo</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+
+      main {
+        max-width: 800px;
+        margin: 20px auto;
+        background-color: #fff;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+      }
+
+      form {
+        display: flex;
+        margin-bottom: 20px;
+      }
+
+      label {
+        margin-right: 10px;
+        line-height: 30px;
+      }
+
+      input {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      button {
+        padding: 8px 12px;
+        background-color: #4caf50;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+
+      .out {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+      }
+
+      figure {
+        flex: 0 0 calc(33.33% - 20px);
+        margin: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      img {
+        width: 100%;
+        height: auto;
+        border-bottom: 1px solid #ddd;
+      }
+
+      figcaption {
+        padding: 10px;
+        text-align: center;
+        background-color: #f8f8f8;
+      }
+    </style>
+  </head>
+  <body>
+    <ma in>
+      <form>
+        <label for="search">Search</label>
+        <input id="search" type="search" />
+        <button id="btnSearch">Go</button>
+      </form>
+      <div class="out"></div>
+    </main>
+    <script>
+      let APIKEY = "VRkW62x3FifpCe11yJ9wqZs383ELzEsc";
+
+      document.addEventListener("DOMContentLoaded", init);
+      function init() {
+        document.getElementById("btnSearch").addEventListener("click", (ev) => {
+          ev.preventDefault();
+          let url = `https://api.giphy.com/v1/gifs/search?api_key=${APIKEY}&limit=9&q=`;
+          let str = document.getElementById("search").value.trim();
+          url = url.concat(str);
+          console.log(url);
+          fetch(url)
+            .then((response) => response.json())
+            .then((content) => {
+              console.log(content.data);
+              console.log("META", content.meta);
+              let out = document.querySelector(".out");
+              out.innerHTML = ""; 
+              content.data.forEach((gif) => {
+                let fig = document.createElement("figure");
+                let img = document.createElement("img");
+                let fc = document.createElement("figcaption");
+                img.src = gif.images.downsized.url;
+                img.alt = gif.title;
+                fc.textContent = gif.title;
+                fig.appendChild(img);
+                fig.appendChild(fc);
+                out.appendChild(fig);
+              });
+              document.querySelector("#search").value = "";
+            })
+            .catch((err) => {
+              console.error(err);
+            });
+        });
+      }
+    </script>
+  </body>
+</html>
